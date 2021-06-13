@@ -13,7 +13,9 @@ pd.options.mode.chained_assignment = None # default='warn'
 from sql_queries import *
 
 def process_song_file(cur, filepath):
-    
+    """
+    Processes song files to insert records into the songs and artists tables
+    """
     #df = pd.read_json(filepath, lines=True) 
     #Added to prevent UTF-8 errors
     df = pd.read_json(codecs.open(filepath, 'r', 'utf-8'), lines=True)
@@ -29,6 +31,11 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    '''
+    Process activity log files to insert records into
+    time and user dimension tables.
+    Insert records into songplays fact table 
+    '''
     #open log file
     #df = pd.read_json(filepath, lines=True) 
     df = pd.read_json(codecs.open(filepath, 'r', 'utf-8'), lines=True)
@@ -58,7 +65,7 @@ def process_log_file(cur, filepath):
         if results:
             songid, artistid = results
         else:
-            songid, artistid = '', ''
+            songid, artistid = None, None
         
         # insert songplay record
         songplay_data = [pd.to_datetime(row.ts, unit='ms'), row.userId, row.level, songid, artistid]
@@ -68,6 +75,9 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    '''
+    Calls the file processing functions
+    '''
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):

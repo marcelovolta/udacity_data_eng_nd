@@ -11,9 +11,9 @@ time_table_drop = "DROP TABLE IF EXISTS time;"
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays (
     songplay_id SERIAL PRIMARY KEY,
-    start_time timestamp without time zone,
-    user_id integer,
-    level varchar(40),
+    start_time timestamp without time zone NOT NULL,
+    user_id integer NOT NULL,
+    level varchar(40) NOT NULL,
     song varchar(18),
     artist varchar(18), 
     CONSTRAINT non_dupe
@@ -77,7 +77,9 @@ user_table_insert = ("""
     INSERT INTO users(user_id, first_name, last_name, gender, level)
     VALUES (%s, %s, %s, %s, %s)
     ON CONFLICT (user_id)
-    DO NOTHING;
+    DO UPDATE
+    SET level = EXCLUDED.level;
+    ;
 """)
 
 song_table_insert = ("""
