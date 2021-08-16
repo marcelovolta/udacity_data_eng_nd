@@ -152,8 +152,8 @@ COPY staging_events FROM 's3://udacity-dend/log_data' credentials 'aws_iam_role=
 
 
 staging_songs_copy = ("""
-COPY staging_songs FROM 's3://udacity-dend/song_data' credentials 'aws_iam_role={}' json {}
-""").format(*config['IAM_ROLE'].values(), config.get('S3','SONG_JSONPATH'))
+COPY staging_songs FROM 's3://udacity-dend/song_data' credentials 'aws_iam_role={}' json 'auto ignorecase'
+""").format(*config['IAM_ROLE'].values())
 
 
 # FINAL TABLES
@@ -173,6 +173,9 @@ INSERT INTO songplays(start_time, user_id, level, song_id, artist_id, session_id
     INNER JOIN staging_songs dss
     ON dse.song = dss.title
     WHERE dse.page = 'NextSong'
+    AND dse.song IS NOT NULL 
+    AND dse.artist IS NOT NULL 
+    AND dse.length IS NOT NULL
 """)
 
 user_table_insert = ("""

@@ -2,19 +2,26 @@ import configparser
 import psycopg2
 from sql_queries import create_table_queries, drop_table_queries
 
-
+'''
+Drop all tables to refresh the data completely on each run
+'''
 def drop_tables(cur, conn):
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
-
+'''
+Create all needed tables: staging and production
+'''
 def create_tables(cur, conn):
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
-
+'''
+Entry point to execute stand-alone: Read config file + Connect to Cluster + 
+Create connection and cursor objects and Call drop and create functions
+'''
 def main():
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
